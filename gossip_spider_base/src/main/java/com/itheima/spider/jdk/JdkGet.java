@@ -14,7 +14,7 @@ import java.net.URL;
  */
 public class JdkGet {
 
-    @Test
+    @Test //课上练习
   public void test01() throws IOException {
       //    1.确定爬取的url
       String indexUrl = "http://www.itcast.cn/";
@@ -43,4 +43,10 @@ public class JdkGet {
 
 //    4.获取数据
   }
+
+    @Test // 课后练习
+    public void test2() {
+//        1.确定爬取的url
+
+    }
 }
