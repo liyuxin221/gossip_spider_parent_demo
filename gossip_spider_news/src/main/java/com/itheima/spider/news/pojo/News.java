@@ -1,9 +1,7 @@
 package com.itheima.spider.news.pojo;
 
 /**
- * @author: Liyuxin wechat:13011800146.
- * @Title: News
- * @ProjectName gossip_spider_parent
+ * @author: Liyuxin wechat:13011800146. @Title: News @ProjectName gossip_spider_parent
  * @date: 2019/1/12 15:18
  * @description: 存放新闻的pojo
  */
@@ -13,10 +11,10 @@ public class News {
      */
     private String id;
 
-    //标题
+    // 标题
     private String title;
 
-    //来源
+    // 来源
     private String source;
 
     // 时间
@@ -33,15 +31,29 @@ public class News {
 
     @Override
     public String toString() {
-        return "News{" +
-                "id='" + id + '\'' +
-                ", title='" + title + '\'' +
-                ", source='" + source + '\'' +
-                ", time='" + time + '\'' +
-                ", url='" + url + '\'' +
-                ", editor='" + editor + '\'' +
-                ", content='" + content + '\'' +
-                '}';
+        return "News{"
+                + "id='"
+                + id
+                + '\''
+                + ", title='"
+                + title
+                + '\''
+                + ", source='"
+                + source
+                + '\''
+                + ", time='"
+                + time
+                + '\''
+                + ", url='"
+                + url
+                + '\''
+                + ", editor='"
+                + editor
+                + '\''
+                + ", content='"
+                + content
+                + '\''
+                + '}';
     }
 
     public String getId() {
@@ -100,4 +112,3 @@ public class News {
         this.content = content;
     }
 }
-

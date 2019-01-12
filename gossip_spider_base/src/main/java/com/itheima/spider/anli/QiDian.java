@@ -18,9 +18,10 @@ import java.io.IOException;
 
 /**
  * 自动获取 起点中文网下的 贞观太上皇 小说下的的章节,并将章节序列化至磁盘.
+ *
  * @author: Liyuxin wechat:13011800146.
  * @date: 2019/1/9
- * @description: ${todo}
+ * @description:
  */
 public class QiDian {
 
@@ -29,13 +30,12 @@ public class QiDian {
     //      1.确定爬取的url
     String url = "https://read.qidian.com/chapter/svUETOWbl6fnFF_K_BxgEA2/AG8BYOCohM62uJcMpdsVgA2";
 
-    while (url!=null){
+    while (url != null) {
       String artAndNext = getArtAndNext(url);
       url = artAndNext;
     }
     //      2.创建httpClient对象,发送请求
   }
-
 
   public String getArtAndNext(String url) throws IOException {
     String htmlStr = getDocumentStr(url);
@@ -58,25 +58,26 @@ public class QiDian {
 
     Elements select = document.select("#j_chapterNext");
 
-//    获取失败退出程序
-    if(select==null){
+    //    获取失败退出程序
+    if (select == null) {
       return null;
     }
     String nextHref = select.get(0).attr("href");
-    return  nextHref = "http:" + nextHref;
+    return nextHref = "http:" + nextHref;
   }
 
   /**
    * 将章节内容序列化至磁盘
-   * @param titleStr  章节名称,同时是文件名称
+   *
+   * @param titleStr 章节名称,同时是文件名称
    * @param pElements 文章内容
    * @throws IOException
    */
   public void makeArticalSerialized(String titleStr, Elements pElements) throws IOException {
     BufferedWriter bw = new BufferedWriter(new FileWriter(titleStr + ".txt", true));
-    String line=null;
+    String line = null;
 
-    for (Element pElement : pElements){
+    for (Element pElement : pElements) {
       // 获取每一个段落
       //    将获取到的内容写入文件中
       line = pElement.text();
@@ -88,9 +89,9 @@ public class QiDian {
     bw.close();
   }
 
-
   /**
    * 根据连接地址获取String类型的Document
+   *
    * @param url
    * @return
    * @throws IOException

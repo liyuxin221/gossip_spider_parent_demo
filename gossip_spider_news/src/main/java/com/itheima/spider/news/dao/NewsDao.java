@@ -7,9 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import java.beans.PropertyVetoException;
 
 /**
- * @author: Liyuxin wechat:13011800146.
- * @Title: NewDao
- * @ProjectName gossip_spider_parent
+ * @author: Liyuxin wechat:13011800146. @Title: NewDao @ProjectName gossip_spider_parent
  * @date: 2019/1/12 16:26
  * @description: 保存新闻的dao
  */
@@ -17,7 +15,7 @@ public class NewsDao extends JdbcTemplate {
     // 数据源
     private static ComboPooledDataSource dataSource;
 
-    //设置四大属性
+    // 设置四大属性
     static {
         try {
             dataSource = new ComboPooledDataSource();
@@ -43,7 +41,8 @@ public class NewsDao extends JdbcTemplate {
      * @param news
      */
     public void saveNews(News news) {
-        String sql = "insert into news(id,title,docurl,content,source,`time`,editor) values(?,?,?,?,?,?,?)";
+        String sql =
+                "insert into news(id,title,docurl,content,source,`time`,editor) values(?,?,?,?,?,?,?)";
         update(
                 sql,
                 news.getId(),

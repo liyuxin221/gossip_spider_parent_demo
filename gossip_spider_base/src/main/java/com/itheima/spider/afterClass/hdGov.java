@@ -19,7 +19,7 @@ import java.net.URLEncoder;
 /**
  * @author: Liyuxin wechat:13011800146.
  * @date: 2019/1/10
- * @description: ${todo}
+ * @description:
  */
 public class hdGov {
     @Test
@@ -47,7 +47,9 @@ public class hdGov {
                         "Cookie",
                         "SearchHistory=%25E8%25A5%25BF%25E4%25B8%2589%25E6%2597%2597%252C%25E8%25A5%25BF%25E4%25B8%2589%252C; cps=D0C900A381D7D5598A4AE451CEE8AA63; SERVERID=4d05bf5e60e007535731ac38c3d48a40|1547088756|1547088756"),
                 new BasicHeader("Upgrade-Insecure-Requests", "1"),
-                new BasicHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8"),
+                new BasicHeader(
+                        "Accept",
+                        "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8"),
                 new BasicHeader("Accept-Encoding", "gzip, deflate"),
                 new BasicHeader("Accept-Language", "zh-CN,zh;q=0.9"),
                 new BasicHeader("Host", "47.95.44.144"),
@@ -57,11 +59,11 @@ public class hdGov {
         httpGet.setHeaders(basicHeaders);
         //    2.2 发送请求
         CloseableHttpResponse response = client.execute(httpGet);
-//      2.3 获取数据
+        //      2.3 获取数据
         HttpEntity entity = response.getEntity();
         String htmlStr = EntityUtils.toString(entity, "utf-8");
 
-//    把网页数据序列化至磁盘
+        //    把网页数据序列化至磁盘
         BufferedWriter bw = new BufferedWriter(new FileWriter(keyWord + ".html", true));
         bw.write(htmlStr);
         bw.newLine();
@@ -75,4 +77,3 @@ public class hdGov {
         System.out.println(element.text());
     }
 }
-

@@ -17,7 +17,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Arrays;
 
 /**
  * 爬取起点中文网排行榜的十本书.
@@ -67,14 +66,15 @@ public class QidianPaihangDemo {
             // 获取书的段落
             Elements paragraphs = testReadPageDocument.select(".read-content j_readContent");
             // 获取书的章节内容,并序列化至磁盘
-            BufferedWriter fileWriter = new BufferedWriter(new FileWriter(bookPath + "\\" + sectionName + ".txt", true));
+            BufferedWriter fileWriter =
+                    new BufferedWriter(new FileWriter(bookPath + "\\" + sectionName + ".txt", true));
             for (Element paragraph : paragraphs) {
                 // 对每一个段落写入文件
                 fileWriter.write(paragraph.text());
                 fileWriter.newLine();
                 fileWriter.flush();
             }
-            //关闭写入资源
+            // 关闭写入资源
             fileWriter.close();
         }
     }
@@ -115,6 +115,4 @@ public class QidianPaihangDemo {
         System.out.println(Path);
         return Path;
     }
-
 }
-

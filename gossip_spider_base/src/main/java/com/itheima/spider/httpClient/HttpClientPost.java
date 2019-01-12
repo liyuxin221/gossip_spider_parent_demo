@@ -9,46 +9,45 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.junit.Test;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 /**
  * @author: Liyuxin wechat:13011800146.
  * @date: 2019/1/9
- * @description: ${todo}
+ * @description: 使用HttpClient发送post请求
  */
 public class HttpClientPost {
 
-    @Test
+  @Test
   public void test1() throws Exception {
-//      1.确定url
-        String url = "http://www.itcast.cn";
+    //      1.确定url
+    String url = "http://www.itcast.cn";
 
     //      2.发送请求,获取数据
     //      2.1创建httpClient对象
-        CloseableHttpClient client = HttpClients.createDefault();
+    CloseableHttpClient client = HttpClients.createDefault();
 
     //        2.2设置请求方式
-        HttpPost httpPost = new HttpPost(url);
+    HttpPost httpPost = new HttpPost(url);
 
     //        2.3 设置请求参数和请求头
-        ArrayList<BasicNameValuePair> list = new ArrayList<BasicNameValuePair>();
+    ArrayList<BasicNameValuePair> list = new ArrayList<BasicNameValuePair>();
 
     list.add(new BasicNameValuePair("username", "xiaochuan"));
     list.add(new BasicNameValuePair("password", "123"));
 
-        UrlEncodedFormEntity entity = new UrlEncodedFormEntity(list, "utf-8");
-        httpPost.setEntity(entity);
+    UrlEncodedFormEntity entity = new UrlEncodedFormEntity(list, "utf-8");
+    httpPost.setEntity(entity);
 
     //        2.4 发送请求,获取响应对象
-        CloseableHttpResponse response = client.execute(httpPost);
+    CloseableHttpResponse response = client.execute(httpPost);
 
     //        2.5 获取数据
     //        2.5.1获取状态码
-        int statusCode = response.getStatusLine().getStatusCode();
+    int statusCode = response.getStatusLine().getStatusCode();
     if (statusCode == 200) {
-        HttpEntity entity1 = response.getEntity();
+      HttpEntity entity1 = response.getEntity();
       System.out.println(entity1);
     }
-    }
+  }
 }

@@ -27,18 +27,19 @@ public class HttpClientUtils {
     private static PoolingHttpClientConnectionManager connectionManager;
 
     static {
-//      定义一个连接池的工具类对象
+        //      定义一个连接池的工具类对象
         connectionManager = new PoolingHttpClientConnectionManager();
-//    定义连接池属性
-//    定义连接池最大的连接数
+        //    定义连接池属性
+        //    定义连接池最大的连接数
         connectionManager.setMaxTotal(200);
-//    定义主机的最大并发数
+        //    定义主机的最大并发数
         connectionManager.setDefaultMaxPerRoute(20);
     }
 
     //  获取closeHttpClient
     private static CloseableHttpClient getCloseableHttpClient() {
-        CloseableHttpClient httpClient = HttpClients.custom().setConnectionManager(connectionManager).build();
+        CloseableHttpClient httpClient =
+                HttpClients.custom().setConnectionManager(connectionManager).build();
         return httpClient;
     }
 
@@ -50,17 +51,22 @@ public class HttpClientUtils {
      * @throws IOException
      */
     private static String execute(HttpRequestBase httpRequestBase) throws IOException {
-        httpRequestBase.setHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.153 Safari/537.36");
+        httpRequestBase.setHeader(
+                "User-Agent",
+                "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.153 Safari/537.36");
         /**
          * setConnectionRequestTimeout:设置获取请求的最长时间
          *
-         * setConnectTimeout: 设置创建连接的最长时间
+         * <p>setConnectTimeout: 设置创建连接的最长时间
          *
-         * setSocketTimeout: 设置传输超时的最长时间
+         * <p>setSocketTimeout: 设置传输超时的最长时间
          */
-
-        RequestConfig config = RequestConfig.custom().setConnectionRequestTimeout(5000).setConnectTimeout(5000)
-                .setSocketTimeout(10 * 1000).build();
+        RequestConfig config =
+                RequestConfig.custom()
+                        .setConnectionRequestTimeout(5000)
+                        .setConnectTimeout(5000)
+                        .setSocketTimeout(10 * 1000)
+                        .build();
 
         httpRequestBase.setConfig(config);
 
@@ -90,7 +96,6 @@ public class HttpClientUtils {
         String html = execute(httpGet);
 
         return html;
-
     }
 
     /**
@@ -116,4 +121,3 @@ public class HttpClientUtils {
         return execute(httpPost);
     }
 }
-
