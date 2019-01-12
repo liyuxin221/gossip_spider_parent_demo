@@ -7,6 +7,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="gossip_spider_base" />
+        <module name="gossip_spider_news" />
         <module name="gossip_spider_redis" />
       </profile>
     </annotationProcessing>
