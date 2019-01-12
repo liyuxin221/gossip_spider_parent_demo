@@ -116,10 +116,5 @@ public class QidianPaihangDemo {
         return Path;
     }
 
-    @Test
-    public void test2() {
-        String[] illegalCharacters = {"？", "\\", "\\*", "|", "\\“", "<", ">", ":", "/"};
-        System.out.println(wipeIllegalPathCharacter("第一章 那是什么？\\*|“<>:/"));
-    }
 }
 
