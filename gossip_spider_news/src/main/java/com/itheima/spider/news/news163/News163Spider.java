@@ -1,16 +1,19 @@
-package com.itheima.spider.news.new163;
+package com.itheima.spider.news.news163;
 
 import com.google.gson.Gson;
+import com.itheima.spider.news.constant.SpiderConstant;
 import com.itheima.spider.news.dao.NewsDao;
 import com.itheima.spider.news.pojo.News;
 import com.itheima.spider.news.utils.HttpClientUtils;
 import com.itheima.spider.news.utils.IdWorker;
+import com.itheima.spider.news.utils.JedisUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.junit.Test;
+import redis.clients.jedis.Jedis;
 
 import java.io.IOException;
 import java.util.List;
@@ -27,9 +30,7 @@ public class News163Spider {
    */
   private static IdWorker idWorker = new IdWorker(0, 0);
 
-  /**
-   * 存储新闻信息的dao
-   */
+  /** 存储新闻信息的dao */
   private static NewsDao newsDao = new NewsDao();
 
   @Test
@@ -91,12 +92,40 @@ public class News163Spider {
       if (docurl.contains("photoview")) {
         continue;
       }
-      // 检查是否重复获取文章
 
+      // 检查是否重复获取文章
+      if (hasParsedUrl(docurl)) {
+        break;
+      }
 
       // 解析每条新闻数据
       parseItemNews(docurl);
+
+      //将已经爬取的新闻url地址放入Redis缓存中
+      saveNewsUrlToRedis(docurl);
     }
+  }
+
+  /**
+   * 将已经爬取的新闻url地址放入Redis缓存中
+   *
+   * @param docurl
+   */
+  private void saveNewsUrlToRedis(String docurl) {
+    Jedis jedis = JedisUtils.getJedis();
+    jedis.sadd(SpiderConstant.SPIDER_NEWS163, docurl);
+    jedis.close();
+  }
+
+  /**
+   * @param docurl
+   * @return true 已经爬取 ,false 未爬取
+   */
+  private boolean hasParsedUrl(String docurl) {
+    Jedis jedis = JedisUtils.getJedis();
+    Boolean sismember = jedis.sismember(SpiderConstant.SPIDER_NEWS163, docurl);
+    jedis.close();
+    return sismember;
   }
 
   /**
