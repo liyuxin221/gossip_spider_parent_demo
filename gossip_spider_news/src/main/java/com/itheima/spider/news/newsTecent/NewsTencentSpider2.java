@@ -192,7 +192,5 @@ public class NewsTencentSpider2 {
             jedis.sadd(SpiderConstant.SPIDER_NEWS_TENCENT, news.getUrl());
             jedis.close();
         }
-
-
     }
 }
