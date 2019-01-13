@@ -10,6 +10,7 @@ import com.itheima.spider.news.utils.JedisUtils;
 import org.junit.Test;
 import redis.clients.jedis.Jedis;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -32,32 +33,52 @@ public class NewsTencentSpider {
      * Gson对象
      */
     private static Gson gson = new Gson();
+    /**
+     * Jedis对象
+     */
+    private static Jedis jedis = JedisUtils.getJedis();
 
     // 爬取新闻的测试方法
     @Test
     public void parseTest() throws Exception {
         // 1. 确定url
-        // 热点新闻 仅有一页
-        // https://pacaio.match.qq.com/irs/rcd?cid=137&token=d0f13d594edfc180f5bf6b845456f3ea&id=&ext=ent&num=300
-        // 非热点新闻 多页
-        // https://pacaio.match.qq.com/irs/rcd?cid=146&token=49cbb2154853ef1a74ff4e53723372ce&ext=ent&page=1&num=100
-
         String hotNewsUrl =
                 "https://pacaio.match.qq.com/irs/rcd?cid=137&token=d0f13d594edfc180f5bf6b845456f3ea&id=&ext=ent&num=300";
         String normalNewsUrl =
-                "https://pacaio.match.qq.com/irs/rcd?cid=146&token=49cbb2154853ef1a74ff4e53723372ce&ext=ent&page=1&num=100";
+                "https://pacaio.match.qq.com/irs/rcd?cid=146&token=49cbb2154853ef1a74ff4e53723372ce&ext=ent&page=0";
 
-        // 2. 发送请求,获取json数据
+        // 2.爬取新闻
+        parsedTecentNews(hotNewsUrl, normalNewsUrl);
+    }
+
+    private void parsedTecentNews(String hotNewsUrl, String normalNewsUrl) throws IOException {
+        // 1.爬取热点新闻
         String hotNews = HttpClientUtils.doGet(hotNewsUrl);
-        String normalNews = HttpClientUtils.doGet(normalNewsUrl);
-
-        // 3.解析json数据--->List<News>
         List<News> hotNewsList = parseNewsJson(hotNews);
-        List<News> normalNewsList = parseNewsJson(normalNews);
-
-        // 4.保存数据到数据库
         saveNews(hotNewsList);
-        saveNews(normalNewsList);
+
+        // 2.爬取非热点新闻
+        int page = 1;
+        while (true) {
+            // 解析json数据--->List<News>
+            String normalNews = HttpClientUtils.doGet(normalNewsUrl);
+            List<News> normalNewsList = parseNewsJson(normalNews);
+
+            // 判断当前页是否存在
+            if (normalNewsList == null || normalNewsList.size() <= 0) {
+                break;
+            }
+            // 保存数据到数据库
+            saveNews(normalNewsList);
+
+            // 拼接下一页的url
+            normalNewsUrl =
+                    "https://pacaio.match.qq.com/irs/rcd?cid=146&token=49cbb2154853ef1a74ff4e53723372ce&ext=ent&page="
+                            + page;
+            page++;
+        }
+
+        jedis.close();
     }
 
     /**
@@ -106,7 +127,6 @@ public class NewsTencentSpider {
         return newsList;
     }
 
-
     /**
      * 判断url是否已被爬取
      *
@@ -114,9 +134,7 @@ public class NewsTencentSpider {
      * @return true 已经爬取 ,false 未爬取
      */
     private boolean hasParsedUrl(String docurl) {
-        Jedis jedis = JedisUtils.getJedis();
         Boolean sismember = jedis.sismember(SpiderConstant.SPIDER_NEWS163, docurl);
-        jedis.close();
         return sismember;
     }
 
@@ -128,6 +146,17 @@ public class NewsTencentSpider {
     private void saveNews(List<News> hotNewsList) {
         for (News news : hotNewsList) {
             newsDao.saveNews(news);
+            // 将url保存至缓存
+            saveNewsUrlToRedis(news.getUrl());
         }
     }
+
+    /**
+     * 将已经爬取的新闻url地址放入Redis缓存中
+     *
+     * @param docurl
+     */
+    private void saveNewsUrlToRedis(String docurl) {
+        jedis.sadd(SpiderConstant.SPIDER_NEWS_TENCENT, docurl);
+  }
 }
