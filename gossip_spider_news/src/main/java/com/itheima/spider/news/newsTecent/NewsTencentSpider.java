@@ -32,10 +32,6 @@ public class NewsTencentSpider {
      * Gson对象
      */
     private static Gson gson = new Gson();
-    /**
-     * Jedis对象
-     */
-    private static Jedis jedis = JedisUtils.getJedis();
 
     // 爬取新闻的测试方法
     public static void main(String[] args) throws Exception {
@@ -75,8 +71,6 @@ public class NewsTencentSpider {
                             + page;
             page++;
         }
-
-        jedis.close();
     }
 
     /**
@@ -132,7 +126,9 @@ public class NewsTencentSpider {
      * @return true 已经爬取 ,false 未爬取
      */
     private static boolean hasParsedUrl(String docurl) {
+        Jedis jedis = JedisUtils.getJedis();
         Boolean sismember = jedis.sismember(SpiderConstant.SPIDER_NEWS163, docurl);
+        jedis.close();
         return sismember;
     }
 
@@ -144,17 +140,11 @@ public class NewsTencentSpider {
     private static void saveNews(List<News> hotNewsList) {
         for (News news : hotNewsList) {
             newsDao.saveNews(news);
+            Jedis jedis = JedisUtils.getJedis();
             // 将url保存至缓存
-            saveNewsUrlToRedis(news.getUrl());
+            jedis.sadd(SpiderConstant.SPIDER_NEWS_TENCENT, news.getUrl());
+            jedis.close();
         }
     }
 
-    /**
-     * 将已经爬取的新闻url地址放入Redis缓存中
-     *
-     * @param docurl
-     */
-    private static void saveNewsUrlToRedis(String docurl) {
-        jedis.sadd(SpiderConstant.SPIDER_NEWS_TENCENT, docurl);
-  }
 }
