@@ -7,7 +7,6 @@ import com.itheima.spider.news.pojo.News;
 import com.itheima.spider.news.utils.HttpClientUtils;
 import com.itheima.spider.news.utils.IdWorker;
 import com.itheima.spider.news.utils.JedisUtils;
-import org.junit.Test;
 import redis.clients.jedis.Jedis;
 
 import java.io.IOException;
@@ -39,8 +38,7 @@ public class NewsTencentSpider {
     private static Jedis jedis = JedisUtils.getJedis();
 
     // 爬取新闻的测试方法
-    @Test
-    public void parseTest() throws Exception {
+    public static void main(String[] args) throws Exception {
         // 1. 确定url
         String hotNewsUrl =
                 "https://pacaio.match.qq.com/irs/rcd?cid=137&token=d0f13d594edfc180f5bf6b845456f3ea&id=&ext=ent&num=300";
@@ -51,7 +49,7 @@ public class NewsTencentSpider {
         parsedTecentNews(hotNewsUrl, normalNewsUrl);
     }
 
-    private void parsedTecentNews(String hotNewsUrl, String normalNewsUrl) throws IOException {
+    private static void parsedTecentNews(String hotNewsUrl, String normalNewsUrl) throws IOException {
         // 1.爬取热点新闻
         String hotNews = HttpClientUtils.doGet(hotNewsUrl);
         List<News> hotNewsList = parseNewsJson(hotNews);
@@ -87,7 +85,7 @@ public class NewsTencentSpider {
      * @param hotNews json类型的新闻数据
      * @return List<News>
      */
-    private List<News> parseNewsJson(String hotNews) {
+    private static List<News> parseNewsJson(String hotNews) {
         // 1.json数据转换成Map<String,Object>
         Map<String, Object> map = gson.fromJson(hotNews, Map.class);
         // 2.Map<String,Object>--->List<Map<String,Object>>
@@ -133,7 +131,7 @@ public class NewsTencentSpider {
      * @param docurl
      * @return true 已经爬取 ,false 未爬取
      */
-    private boolean hasParsedUrl(String docurl) {
+    private static boolean hasParsedUrl(String docurl) {
         Boolean sismember = jedis.sismember(SpiderConstant.SPIDER_NEWS163, docurl);
         return sismember;
     }
@@ -143,7 +141,7 @@ public class NewsTencentSpider {
      *
      * @param hotNewsList 新闻列表
      */
-    private void saveNews(List<News> hotNewsList) {
+    private static void saveNews(List<News> hotNewsList) {
         for (News news : hotNewsList) {
             newsDao.saveNews(news);
             // 将url保存至缓存
@@ -156,7 +154,7 @@ public class NewsTencentSpider {
      *
      * @param docurl
      */
-    private void saveNewsUrlToRedis(String docurl) {
+    private static void saveNewsUrlToRedis(String docurl) {
         jedis.sadd(SpiderConstant.SPIDER_NEWS_TENCENT, docurl);
   }
 }

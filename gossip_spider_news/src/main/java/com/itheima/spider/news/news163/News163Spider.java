@@ -12,7 +12,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.junit.Test;
 import redis.clients.jedis.Jedis;
 
 import java.io.IOException;
@@ -33,8 +32,7 @@ public class News163Spider {
   /** 存储新闻信息的dao */
   private static NewsDao newsDao = new NewsDao();
 
-  @Test
-  public void testMain() throws Exception {
+    public static void main(String[] args) throws Exception {
     // 1.确定爬取的url
     String newsUrl = "http://ent.163.com/special/000380VU/newsdata_index.js";
 
@@ -48,7 +46,7 @@ public class News163Spider {
    * @param newsUrl
    * @throws IOException
    */
-  private void parse163News(String newsUrl) throws IOException {
+  private static void parse163News(String newsUrl) throws IOException {
 
     String url = newsUrl;
     int i = 2;
@@ -80,7 +78,7 @@ public class News163Spider {
    * @param pageHtmlStr
    * @throws IOException
    */
-  private void parseJasonNews(String pageHtmlStr) throws IOException {
+  private static void parseJasonNews(String pageHtmlStr) throws IOException {
     // 将页面字符串转换成良好的json格式
     String pageJson = getJsonString(pageHtmlStr);
     Gson gson = new Gson();
@@ -111,7 +109,7 @@ public class News163Spider {
    *
    * @param docurl
    */
-  private void saveNewsUrlToRedis(String docurl) {
+  private static void saveNewsUrlToRedis(String docurl) {
     Jedis jedis = JedisUtils.getJedis();
     jedis.sadd(SpiderConstant.SPIDER_NEWS163, docurl);
     jedis.close();
@@ -121,7 +119,7 @@ public class News163Spider {
    * @param docurl
    * @return true 已经爬取 ,false 未爬取
    */
-  private boolean hasParsedUrl(String docurl) {
+  public static boolean hasParsedUrl(String docurl) {
     Jedis jedis = JedisUtils.getJedis();
     Boolean sismember = jedis.sismember(SpiderConstant.SPIDER_NEWS163, docurl);
     jedis.close();
@@ -134,7 +132,7 @@ public class News163Spider {
    * @param docurl
    * @throws IOException
    */
-  private void parseItemNews(String docurl) throws IOException {
+  private static void parseItemNews(String docurl) throws IOException {
     // 获取每一条新闻的信息,封装至News对象中
     String s = HttpClientUtils.doGet(docurl);
     Document document = Jsoup.parse(s);
@@ -175,7 +173,7 @@ public class News163Spider {
    * @param pageHtmlStr
    * @return
    */
-  private String getJsonString(String pageHtmlStr) {
+  private static String getJsonString(String pageHtmlStr) {
     int starIndex = pageHtmlStr.indexOf("(") + 1;
     int endIndex = pageHtmlStr.lastIndexOf(")");
     pageHtmlStr = pageHtmlStr.substring(starIndex, endIndex);
