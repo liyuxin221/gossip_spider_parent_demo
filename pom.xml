@@ -12,6 +12,7 @@
         <module>gossip_spider_redis</module>
         <module>gossip_spider_base</module>
         <module>gossip_spider_news</module>
+        <module>gossip_spider_news_deploy</module>
     </modules>
 
 

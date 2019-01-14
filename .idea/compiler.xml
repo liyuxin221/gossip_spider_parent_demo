@@ -8,6 +8,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="gossip_spider_base" />
         <module name="gossip_spider_news" />
+        <module name="gossip_spider_news_deploy" />
         <module name="gossip_spider_redis" />
       </profile>
     </annotationProcessing>
