@@ -81,12 +81,14 @@ public class News163Master {
             // 重复
             if (hasParsedUrl(docurl)) {
                 continue;
-            } else {
-                // 不重复,将url放入urlList
-                Jedis jedis = JedisUtils.getJedis();
-                jedis.lpush(SpiderConstant.SPIDER_NEWS_URLLIST, docurl);
-                jedis.close();
             }
+
+            System.out.println("新闻的url：" + docurl);
+            // 不重复,将url放入urlList
+            Jedis jedis = JedisUtils.getJedis();
+            jedis.lpush(SpiderConstant.SPIDER_NEWS_URLLIST, docurl);
+            jedis.close();
+
             // System.out.println("新闻的url：" + docurl);
         }
     }

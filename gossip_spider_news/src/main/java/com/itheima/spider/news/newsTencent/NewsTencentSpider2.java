@@ -1,4 +1,4 @@
-package com.itheima.spider.news.newsTecent;
+package com.itheima.spider.news.newsTencent;
 
 import com.google.gson.Gson;
 import com.itheima.spider.news.constant.SpiderConstant;

@@ -1,8 +1,7 @@
-package com.itheima.spider.news.newsTecent;
+package com.itheima.spider.news.version2;
 
 import com.google.gson.Gson;
 import com.itheima.spider.news.constant.SpiderConstant;
-import com.itheima.spider.news.dao.NewsDao;
 import com.itheima.spider.news.pojo.News;
 import com.itheima.spider.news.utils.HttpClientUtils;
 import com.itheima.spider.news.utils.IdWorker;
@@ -16,12 +15,13 @@ import java.util.Map;
 
 /**
  * @author itheima
- * @Title: NewsTencentSpider
+ * @Title: NewsTencentMaster
  * @ProjectName gossip_spider_parent
- * @Description: 腾讯娱乐新闻爬虫(示范代码)
- * @date 2019/1/1114:44
+ * @Description: 腾讯爬虫的master程序：获取新闻(热点和非热点新闻)数据json,转换成List<News>对象，保存到redis的list集合中：bigData:spider:newsJsonList
+ * @date 2019/1/1411:47
  */
-public class NewsTencentSpider2 {
+public class NewsTencentMaster {
+
 
     /**
      * json转换的对象
@@ -31,36 +31,19 @@ public class NewsTencentSpider2 {
      * 分布式id生成器: 0---31之间的参数
      */
     private static IdWorker idWorker = new IdWorker(0, 0);
-    /**
-     * dao层对象
-     */
-    private static NewsDao newsDao = new NewsDao();
 
     public static void main(String[] args) throws IOException {
-        //1.确定url:热点新闻url   非热点新闻url
-
+        //1. 确定url
         String hotUrl = "https://pacaio.match.qq.com/irs/rcd?cid=137&token=d0f13d594edfc180f5bf6b845456f3ea&id=&ext=ent&num=60";
 
         String nohotUrl = "https://pacaio.match.qq.com/irs/rcd?cid=146&token=49cbb2154853ef1a74ff4e53723372ce&ext=ent&page=0";
 
-
-        //2.发送请求，获取新闻的json数据
-        /*String hotJson = HttpClientUtils.doGet(hotUrl);
-        String noHotJson = HttpClientUtils.doGet(nohotUrl);
-
-        System.out.println("热点新闻：" + hotJson);
-        System.out.println("非热点数据：" + noHotJson);*/
-
-        //3. 解析json数据------>List<News>
-        /*List<News> hotList = parseNewsJson(hotJson);
-        List<News> noHotList = parseNewsJson(noHotJson);*/
-
-        //4. 保存数据到数据库中
-       /* saveNewsList(hotList);
-        saveNewsList(noHotList);*/
-
+        //2. 获取json列表，转换成List<News>对象
+        //3. 保存到redis的list集合中：bigData:spider:newsJsonList
         pageTencent(hotUrl, nohotUrl);
+
     }
+
 
     /**
      * 处理分页爬取的方法
@@ -98,6 +81,38 @@ public class NewsTencentSpider2 {
             page++;
         }
 
+
+    }
+
+
+    /**
+     * 将新闻列表数据保存到list集合中：bigData:spider:newsJsonList
+     *
+     * @param newsList ： 新闻列表
+     */
+    private static void saveNewsList(List<News> newsList) {
+        for (News news : newsList) {
+            //将已经爬取过的新闻，保存到redis的list集合中
+            Jedis jedis = JedisUtils.getJedis();
+            jedis.lpush(SpiderConstant.SPIDER_NEWS_NEWJSONLIST, gson.toJson(news));
+            jedis.close();
+        }
+
+    }
+
+
+    /**
+     * 判断给定url是否已经爬取过
+     *
+     * @param url 新闻的url
+     * @return true : 已经爬取过   false  : 未爬取
+     */
+    private static boolean hasParsedUrl(String url) {
+        Jedis jedis = JedisUtils.getJedis();
+        //判断给定的url是否在腾讯url的set集合中
+        Boolean sismember = jedis.sismember(SpiderConstant.SPIDER_NEWS_URLSET, url);
+        jedis.close();
+        return sismember;
 
     }
 
@@ -161,36 +176,5 @@ public class NewsTencentSpider2 {
         //返回结果
         return newslist;
 
-    }
-
-    /**
-     * 判断给定url是否已经爬取过
-     *
-     * @param url 新闻的url
-     * @return true : 已经爬取过   false  : 未爬取
-     */
-    private static boolean hasParsedUrl(String url) {
-        Jedis jedis = JedisUtils.getJedis();
-        //判断给定的url是否在腾讯url的set集合中
-        Boolean sismember = jedis.sismember(SpiderConstant.SPIDER_NEWS_TENCENT, url);
-        jedis.close();
-        return sismember;
-
-    }
-
-    /**
-     * 将新闻列表数据保存到数据库中
-     *
-     * @param newsList ： 新闻列表
-     */
-    private static void saveNewsList(List<News> newsList) {
-        for (News news : newsList) {
-            newsDao.saveNews(news);
-            //将已经爬取过的新闻，保存到redis的set集合中
-            Jedis jedis = JedisUtils.getJedis();
-            //将这条新闻的url保存到redis中
-            jedis.sadd(SpiderConstant.SPIDER_NEWS_TENCENT, news.getUrl());
-            jedis.close();
-        }
     }
 }
