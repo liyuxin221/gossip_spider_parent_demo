@@ -88,7 +88,7 @@
                 <configuration>
                     <archive>
                         <manifest> <!-- 注意 此为设置程序的主入口-->
-                            <mainClass>com.itheima.spider.news.version.PublicDaoNode</mainClass>
+                            <mainClass>com.itheima.spider.news.version.NewsTencentMaster</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

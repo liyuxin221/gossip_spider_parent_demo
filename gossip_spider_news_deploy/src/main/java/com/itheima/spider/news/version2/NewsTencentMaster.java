@@ -94,7 +94,7 @@ public class NewsTencentMaster {
         for (News news : newsList) {
             //将已经爬取过的新闻，保存到redis的list集合中
             Jedis jedis = JedisUtils.getJedis();
-            jedis.lpush(SpiderConstant.SPIDER_NEWS_NEWJSONLIST, gson.toJson(news));
+            jedis.lpush(SpiderConstant.SPIDER_NEWS_NEWSLIST, gson.toJson(news));
             jedis.close();
         }
 

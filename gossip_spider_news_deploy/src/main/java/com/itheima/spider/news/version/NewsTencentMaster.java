@@ -18,7 +18,7 @@ import java.util.Map;
  * @date: 2019/1/14 21:49
  * @description: 根据新闻的url, 解析新闻列表页, 封装新闻对象
  */
-public class NewsTecentMaster {
+public class NewsTencentMaster {
     /**
      * Gson对象
      */
