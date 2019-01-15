@@ -13,6 +13,7 @@
         <module>gossip_spider_base</module>
         <module>gossip_spider_news</module>
         <module>gossip_spider_news_deploy</module>
+        <module>gossip_search_lucene</module>
     </modules>
 
 
