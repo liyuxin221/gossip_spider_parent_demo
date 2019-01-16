@@ -3,7 +3,7 @@ package com.itheima.spider.news.constant;
 /**
  * @author: Liyuxin wechat:13011800146. @Title: SpiderConstant @ProjectName gossip_spider_parent
  * @date: 2019/1/13 0:21
- * @description: ${todo}
+ * @description: 定义项目中的常量, 主要为存储在缓存中数据的key值
  */
 public class SpiderConstant {
     /**

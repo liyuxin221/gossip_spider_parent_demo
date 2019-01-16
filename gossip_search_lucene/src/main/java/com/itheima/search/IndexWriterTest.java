@@ -1,5 +1,7 @@
 package com.itheima.search;
 
+import com.itheima.dao.NewsDao;
+import com.itheima.pojo.News;
 import org.apache.lucene.document.*;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
@@ -10,6 +12,7 @@ import org.wltea.analyzer.lucene.IKAnalyzer;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @author: Liyuxin wechat:13011800146. @Title: IndexWriterTest @ProjectName gossip_spider_parent
@@ -39,6 +42,7 @@ public class IndexWriterTest {
         // http://ent.163.com/19/0114/16/E5GAPULO00038FO9.html
         // 网易娱乐1月14日报道
         //
+        //
         // 北京时间1月14日消息，“星爵”克里斯·帕拉特和阿诺德·施瓦辛格的女儿凯瑟琳·施瓦辛格要结婚了。帕拉特透露已求婚，而凯瑟琳说了yes。“很高兴将跟你结婚，很骄傲能无畏并心怀信念与你一起生活”。 帕拉特与旧爱安娜·法瑞斯2017年8月宣布分手，12月申请离婚，结束8年婚姻。去年6月他与凯瑟琳恋情曝光，12月承认关系，如今订婚。
         // 责任编辑：张艺_NBJS7487
         // 2019-01-14 16:07:33
@@ -54,6 +58,7 @@ public class IndexWriterTest {
         //                new StoredField(
         //                        "content",
         //                        "网易娱乐1月14日报道
+        //
         // 北京时间1月14日消息，“星爵”克里斯·帕拉特和阿诺德·施瓦辛格的女儿凯瑟琳·施瓦辛格要结婚了。帕拉特透露已求婚，而凯瑟琳说了yes。“很高兴将跟你结婚，很骄傲能无畏并心怀信念与你一起生活”。 帕拉特与旧爱安娜·法瑞斯2017年8月宣布分手，12月申请离婚，结束8年婚姻。去年6月他与凯瑟琳恋情曝光，12月承认关系，如今订婚。"));
         //        document.add(new TextField("editor", "责任编辑：张艺_NBJS7487", Field.Store.YES));
         //        document.add(new StringField("time", "2019-01-14 16:07:33", Field.Store.YES));
@@ -92,13 +97,13 @@ public class IndexWriterTest {
         // 1.创建目录
         FSDirectory fsDirectory = FSDirectory.open(new File("gossip_search_lucene/IKlucene"));
 
-        //2.分词器对象
+        // 2.分词器对象
         IKAnalyzer ikAnalyzer = new IKAnalyzer();
 
         // 3.创建索引写入器配置对象
         IndexWriterConfig indexWriterConfig = new IndexWriterConfig(Version.LATEST, ikAnalyzer);
 
-        //4.创建索引写入器,配置写入器配置对象
+        // 4.创建索引写入器,配置写入器配置对象
         IndexWriter indexWriter = new IndexWriter(fsDirectory, indexWriterConfig);
 
         // 5.创建文档对象
@@ -114,7 +119,8 @@ public class IndexWriterTest {
         // 嘻嘻盘娱
         StringField id = new StringField("id", "1084506439533199360", Field.Store.YES);
         TextField title = new TextField("title", "佘诗曼被网红拉着拍视频，滤镜下惨变“蛇精”，吓得本尊都看呆了", Field.Store.YES);
-        StringField docurl = new StringField("docurl", "https://xw.qq.com/cmsid/20190113V0P3E400", Field.Store.YES);
+        StringField docurl =
+                new StringField("docurl", "https://xw.qq.com/cmsid/20190113V0P3E400", Field.Store.YES);
         TextField content = new TextField("content", "佘诗曼被偶遇美成小仙女，但是在网红镜头下惨变“蛇精", Field.Store.YES);
         TextField source = new TextField("source", "嘻嘻盘娱", Field.Store.YES);
         StringField time = new StringField("time", "2019-01-13 17:52:40", Field.Store.YES);
@@ -128,11 +134,70 @@ public class IndexWriterTest {
         document.add(time);
         document.add(editor);
 
-        //7.将文档通过索引写入器写入目录类
+        // 7.将文档通过索引写入器写入目录类
         indexWriter.addDocument(document, ikAnalyzer);
         indexWriter.commit();
 
-        //8.关闭资源
+        // 8.关闭资源
+        indexWriter.close();
+        ikAnalyzer.close();
+        fsDirectory.close();
+    }
+
+    /**
+     * 测试将数据库10-20条数据写入索引库
+     */
+    @Test
+    public void test03() throws IOException {
+        NewsDao newsDao = new NewsDao();
+        List<News> list = newsDao.queryList(1, 10);
+
+        for (News news : list) {
+            // 将每个对象写入索引库
+            addNewsInDB(news);
+        }
+    }
+
+    /**
+     * 将News对象写入索引库
+     */
+    public void addNewsInDB(News news) throws IOException {
+        // 1.创建目录
+        FSDirectory fsDirectory = FSDirectory.open(new File("gossip_search_lucene/IKlucene"));
+
+        // 2.分词器对象
+        IKAnalyzer ikAnalyzer = new IKAnalyzer();
+
+        // 3.创建索引写入器配置对象
+        IndexWriterConfig indexWriterConfig = new IndexWriterConfig(Version.LATEST, ikAnalyzer);
+
+        // 4.创建索引写入器,配置写入器配置对象
+        IndexWriter indexWriter = new IndexWriter(fsDirectory, indexWriterConfig);
+
+        // 5.创建文档对象
+        Document document = new Document();
+
+        StringField id = new StringField("id", news.getId(), Field.Store.YES);
+        TextField title = new TextField("title", news.getTitle(), Field.Store.YES);
+        StringField docurl = new StringField("docurl", news.getDocurl(), Field.Store.YES);
+        TextField content = new TextField("content", news.getContent(), Field.Store.YES);
+        TextField source = new TextField("source", news.getSource(), Field.Store.YES);
+        StringField time = new StringField("time", news.getTime(), Field.Store.YES);
+        StringField editor = new StringField("editor", news.getEditor(), Field.Store.YES);
+
+        document.add(id);
+        document.add(title);
+        document.add(docurl);
+        document.add(content);
+        document.add(source);
+        document.add(time);
+        document.add(editor);
+
+        // 7.将文档通过索引写入器写入目录类
+        indexWriter.addDocument(document, ikAnalyzer);
+        indexWriter.commit();
+
+        // 8.关闭资源
         indexWriter.close();
         ikAnalyzer.close();
         fsDirectory.close();
