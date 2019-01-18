@@ -15,6 +15,7 @@
         <module>gossip_spider_news_deploy</module>
         <module>gossip_search_lucene</module>
         <module>gossip_search_solr</module>
+        <module>gossip_search_solrCloud</module>
     </modules>
 
 
