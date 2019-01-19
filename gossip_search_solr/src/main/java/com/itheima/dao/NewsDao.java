@@ -1,6 +1,6 @@
 package com.itheima.dao;
 
-import com.itheima.Pojo.News;
+import com.itheima.pojo.News;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;

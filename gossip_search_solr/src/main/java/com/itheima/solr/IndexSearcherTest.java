@@ -1,6 +1,6 @@
 package com.itheima.solr;
 
-import com.itheima.Pojo.News;
+import com.itheima.pojo.News;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
