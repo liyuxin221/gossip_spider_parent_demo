@@ -45,6 +45,9 @@ public class PublicDaoNode {
             //保存news对象进入数据库
             newsDao.saveNews(news);
 
+            //4.调用生产者代码,将news字符串发送到kafka
+
+
 
             //将url放入去重集合urlSet
             saveNewsUrlToRedis(url);
