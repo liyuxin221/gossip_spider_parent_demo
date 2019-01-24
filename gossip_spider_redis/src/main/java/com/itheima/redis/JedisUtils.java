@@ -11,6 +11,7 @@ import redis.clients.jedis.JedisPoolConfig;
  */
 public class JedisUtils {
   private static final String host = "192.168.72.142";
+  //  private static final String host = "node02";
   private static final int port = 6379;
   private static JedisPool jedisPool = null;
 

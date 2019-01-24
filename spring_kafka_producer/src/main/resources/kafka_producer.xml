@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+
+    <!-- 包扫描 -->
+    <context:component-scan base-package="cn.itcast.kafka.producer"/>
+    <!-- 加载属性文件 -->
+    <context:property-placeholder location="classpath:init.properties"/>
+
+    <!-- 定义producer的参数信息 -->
+    <bean id="producerProperties" class="java.util.HashMap">
+        <constructor-arg>
+            <map>
+                <entry key="bootstrap.servers" value="${kafka.servers}"/>
+                <entry key="group.id" value="0"/>
+                <!--重试次数-->
+                <entry key="retries" value="10"/>
+                <!--批量-->
+                <entry key="batch.size" value="16384"/>
+                <!--间隔时间-->
+                <entry key="linger.ms" value="1"/>
+                <!--缓冲区-->
+                <entry key="buffer.memory" value="33554432"/>
+                <!--序列化-->
+                <entry key="key.serializer" value="org.apache.kafka.common.serialization.IntegerSerializer"/>
+                <entry key="value.serializer" value="org.apache.kafka.common.serialization.StringSerializer"/>
+            </map>
+        </constructor-arg>
+    </bean>
+
+    <!-- 创建kafkatemplate需要使用的producerfactory bean -->
+    <bean id="producerFactory" class="org.springframework.kafka.core.DefaultKafkaProducerFactory">
+        <constructor-arg>
+            <ref bean="producerProperties"/>
+        </constructor-arg>
+    </bean>
+
+    <!-- 就是kafka的producer-->
+    <!-- 创建kafkatemplate bean，使用的时候，只需要注入这个bean，即可使用template的send消息方法 -->
+    <bean id="KafkaTemplate" class="org.springframework.kafka.core.KafkaTemplate">
+        <constructor-arg ref="producerFactory"/>
+        <constructor-arg name="autoFlush" value="true"/>
+        <property name="defaultTopic" value="${kafka.topic}"/>
+    </bean>
+</beans>

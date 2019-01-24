@@ -13,6 +13,10 @@
         <module name="gossip_spider_news" />
         <module name="gossip_spider_news_deploy" />
         <module name="gossip_spider_redis" />
+        <module name="kafka_consumer" />
+        <module name="kafka_producer" />
+        <module name="spring_kafka_consumer" />
+        <module name="spring_kafka_producer" />
       </profile>
     </annotationProcessing>
   </component>

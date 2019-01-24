@@ -25,6 +25,10 @@
         <module>gossip_search_lucene</module>
         <module>gossip_search_solr</module>
         <module>gossip_search_solrCloud</module>
+        <module>kafka_producer</module>
+        <module>kafka_consumer</module>
+        <module>spring_kafka_producer</module>
+        <module>spring_kafka_consumer</module>
     </modules>
 
 

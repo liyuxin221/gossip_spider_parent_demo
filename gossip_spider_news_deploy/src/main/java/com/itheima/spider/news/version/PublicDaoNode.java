@@ -41,8 +41,10 @@ public class PublicDaoNode {
                 continue;
             }
 
+
             //保存news对象进入数据库
             newsDao.saveNews(news);
+
 
             //将url放入去重集合urlSet
             saveNewsUrlToRedis(url);
