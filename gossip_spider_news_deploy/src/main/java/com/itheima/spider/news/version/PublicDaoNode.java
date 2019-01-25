@@ -3,6 +3,7 @@ package com.itheima.spider.news.version;
 import com.google.gson.Gson;
 import com.itheima.spider.news.constant.SpiderConstant;
 import com.itheima.spider.news.dao.NewsDao;
+import com.itheima.spider.news.kafka.NewsProducer;
 import com.itheima.spider.news.pojo.News;
 import com.itheima.spider.news.utils.JedisUtils;
 import redis.clients.jedis.Jedis;
@@ -24,15 +25,22 @@ public class PublicDaoNode {
      */
     private static Gson gson = new Gson();
 
+    /**
+     * 新闻生产者
+     */
+    private static NewsProducer newsProducer = new NewsProducer();
+
+
     public static void main(String[] args) {
         while (true) {
             // 从newsList获取news对象
-            List<String> newsJson = getJsonNews();
-            if (newsJson == null || newsJson.size() <= 0) {
+            List<String> newsJsonList = getJsonNews();
+            if (newsJsonList == null || newsJsonList.size() <= 0) {
                 break;
             }
 
-            News news = gson.fromJson(newsJson.get(1), News.class);
+            String newsJson = newsJsonList.get(1);
+            News news = gson.fromJson(newsJson, News.class);
 
             // 判断该页面是否已经爬取
             String url = news.getUrl();
@@ -46,8 +54,7 @@ public class PublicDaoNode {
             newsDao.saveNews(news);
 
             //4.调用生产者代码,将news字符串发送到kafka
-
-
+            newsProducer.send(newsJson);
 
             //将url放入去重集合urlSet
             saveNewsUrlToRedis(url);
