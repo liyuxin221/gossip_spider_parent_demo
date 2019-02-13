@@ -29,6 +29,7 @@
         <module>kafka_consumer</module>
         <module>spring_kafka_producer</module>
         <module>spring_kafka_consumer</module>
+        <module>gossip_storm_wordcount</module>
     </modules>
 
 
